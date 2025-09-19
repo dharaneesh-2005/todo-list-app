@@ -137,20 +137,34 @@ public class TodoGUI extends JFrame {
         String title = titleField.getText().trim();
         String description = descriptionArea.getText().trim();
         boolean completed = completedCheckBox.isSelected();
+        
+        // Validate input
+        if (title.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a title for the todo", 
+                                        "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
         Todo todo = new Todo(title, description);
+        todo.setCompleted(completed);
 
         try {
             int id = todoAppDAO.createTodo(todo);
-            todo.setCompleted(completed);
             todo.setId(id);
             JOptionPane.showMessageDialog(this, "Todo created successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Clear fields after successful creation
+            titleField.setText("");
+            descriptionArea.setText("");
+            completedCheckBox.setSelected(false);
+            
+            // Refresh the table to show the new todo
+            loadTodos();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error creating todo: " + e.getMessage(),
                                         "Database Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-        loadTodos();
-        titleField.setText("");
     }
 
     private void updateTodo() {
