@@ -31,10 +31,20 @@ public class TodoAppGUI extends JFrame {
         initializeComponents();
         setupComponents();
         setupEventListeners();
-        loadTodos();
+        filterTodo();
     }
-
-    private void initializeComponents() {
+    private void filterTodo(){
+        if(categoryComboBox.getSelectedItem().equals("All")){
+            loadTodos();
+        }
+        else if(categoryComboBox.getSelectedItem().equals("Pending")){
+            loadPendingTodos();
+        }
+        else{
+            loadCompletedTodos();
+        }
+    } 
+       private void initializeComponents() {
         setTitle("Todo App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(900, 600);
@@ -64,7 +74,7 @@ public class TodoAppGUI extends JFrame {
         // Buttons
         addButton = new JButton("Add");
         deleteButton = new JButton("Delete");
-        editButton = new JButton("Edit");
+        editButton = new JButton("Update");
         refreshButton = new JButton("Refresh");
 
         // Filter dropdown
@@ -127,6 +137,7 @@ public class TodoAppGUI extends JFrame {
         editButton.addActionListener(e -> updateTodo());
         deleteButton.addActionListener(e -> deleteTodo());
         refreshButton.addActionListener(e -> refreshTodo());
+        categoryComboBox.addActionListener(e -> filterTodo());
 
         // ✅ Add this listener
         todoTable.getSelectionModel().addListSelectionListener(event -> {
@@ -202,8 +213,11 @@ public class TodoAppGUI extends JFrame {
         }
         int id = (int) tableModel.getValueAt(row, 0);
         try{
-            todoAppDAO.deleteTodo(id);
-            JOptionPane.showMessageDialog(this,"Todo deleted successfully","Success",JOptionPane.INFORMATION_MESSAGE);
+            if(todoAppDAO.deleteTodo(id)==true){
+            JOptionPane.showMessageDialog(this,"Todo deleted successfully","Success",JOptionPane.INFORMATION_MESSAGE);}
+            else{
+                JOptionPane.showMessageDialog(this,"Failed to delete the row","Failed",JOptionPane.WARNING_MESSAGE);
+            }
 
         }
         catch (SQLException e){
@@ -213,6 +227,24 @@ public class TodoAppGUI extends JFrame {
     }
     private void refreshTodo(){
         loadTodos();
+    }
+    private void loadPendingTodos(){
+        try{
+            List<Todo> todos = todoAppDAO.getPendingTodos();
+            updateTable(todos);
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(this,"Completed Todos Loaded"+e.getMessage(),"Loaded",JOptionPane.INFORMATION_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    private void loadCompletedTodos(){
+        try{
+            List<Todo> todos = todoAppDAO.getCompletedTodos();
+            updateTable(todos);
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(this,"Completed Todos Loaded"+e.getMessage(),"Loaded",JOptionPane.INFORMATION_MESSAGE);
+            e.printStackTrace();
+        }
     }
     private void loadTodos(){
         try {

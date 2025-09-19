@@ -13,6 +13,9 @@ public class TodoAppDAO {
     private static final String SELECT_TODO_BY_ID = "SELECT * FROM todos WHERE id = ?";
     private static final String UPDATE_TODO = "UPDATE todos SET title = ?, description = ?, completed = ?, updated_at = ? WHERE id = ?";
     private  static final String DELETE_TODO = "DELETE FROM todos WHERE id = ?";
+    private static final String SELECT_PENDING_TODO = "SELECT * FROM todos WHERE completed = false";
+    private static final String SELECT_COMPLETED_TODO = "SELECT * FROM todos WHERE completed = true";
+    
     // Create a New Todo
     public int createtodo(Todo todo) throws SQLException {
         try (
@@ -71,7 +74,32 @@ public class TodoAppDAO {
                 res.getTimestamp("updated_at") != null ? res.getTimestamp("updated_at").toLocalDateTime() : null
         );
     }
-
+    public List<Todo> getPendingTodos() throws SQLException{
+        List<Todo> todos = new ArrayList<>();
+        try(
+            Connection conn = DatabaseConnection.getDBConnection();
+            PreparedStatement stmt = conn.prepareStatement(SELECT_PENDING_TODO);
+            ResultSet res = stmt.executeQuery()
+        ){
+            while(res.next()){
+                todos.add(getTodoRow(res));
+            }
+        }
+        return todos;
+    }
+    public List<Todo> getCompletedTodos() throws SQLException{
+        List<Todo> todos = new ArrayList<>();
+        try(
+            Connection conn = DatabaseConnection.getDBConnection();
+            PreparedStatement stmt = conn.prepareStatement(SELECT_COMPLETED_TODO);
+            ResultSet res = stmt.executeQuery()
+        ){
+            while(res.next()){
+                todos.add(getTodoRow(res));
+            }
+        }
+        return todos;
+    }
     public List<Todo> getAllTodos() throws SQLException {
         List<Todo> todos = new ArrayList<>();
         try (
