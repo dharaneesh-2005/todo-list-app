@@ -27,6 +27,12 @@ public class Todo {
         this.created_at = created_at;
         this.updated_at = updated_at;
     }
+    public int getId() {
+        return ID;
+    }
+    public void setId(int iD) {
+        ID = iD;
+    }
     public int getID() {
         return ID;
     }
@@ -57,10 +63,22 @@ public class Todo {
     public void setCreated_at(LocalDateTime created_at) {
         this.created_at = created_at;
     }
+    public LocalDateTime getCreatedAt() {
+        return created_at;
+    }
+    public void setCreatedAt(LocalDateTime created_at) {
+        this.created_at = created_at;
+    }
     public LocalDateTime getUpdated_at() {
         return updated_at;
     }
     public void setUpdated_at(LocalDateTime updated_at) {
+        this.updated_at = updated_at;
+    }
+    public LocalDateTime getUpdatedAt() {
+        return updated_at;
+    }
+    public void setUpdatedAt(LocalDateTime updated_at) {
         this.updated_at = updated_at;
     }
 }

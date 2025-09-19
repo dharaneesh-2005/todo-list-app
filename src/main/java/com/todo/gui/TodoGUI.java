@@ -124,40 +124,61 @@ public class TodoGUI extends JFrame {
 
     private void setupEventListeners() {
         addButton.addActionListener(
-            (e) ->{addTodo();});
+            (e) -> { addTodo(); });
         updateButton.addActionListener(
-            (e) ->{updateTodo();});
+            (e) -> { updateTodo(); });
         deleteButton.addActionListener(
-            (e) ->{deleteTodo();});
+            (e) -> { deleteTodo(); });
         refreshButton.addActionListener(
-            (e) ->{refreshTodo();});
+            (e) -> { refreshTodo(); });
     }
 
-    private void addTodo(){
+    private void addTodo() {
+        String title = titleField.getText().trim();
+        String description = descriptionArea.getText().trim();
+        boolean completed = completedCheckBox.isSelected();
+        Todo todo = new Todo(title, description);
+
+        try {
+            int id = todoAppDAO.createTodo(todo);
+            todo.setCompleted(completed);
+            todo.setId(id);
+            JOptionPane.showMessageDialog(this, "Todo created successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error creating todo: " + e.getMessage(),
+                                        "Database Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+        loadTodos();
+        titleField.setText("");
+    }
+
+    private void updateTodo() {
 
     }
-    private void updateTodo(){
+
+    private void deleteTodo() {
 
     }
-    private void deleteTodo(){
 
-    }
-    private void refreshTodo(){
+    private void refreshTodo() {
         loadTodos();
     }
-    private void loadTodos(){
+
+    private void loadTodos() {
         try {
             List<Todo> todos = todoAppDAO.getALLTodos();
             updateTable(todos);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error loading todos: " + e.getMessage(), 
+            JOptionPane.showMessageDialog(this, "Error loading todos: " + e.getMessage(),
                                         "Database Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    private void updateTable(List<Todo> todos){
+
+    private void updateTable(List<Todo> todos) {
         tableModel.setRowCount(0);
-        for(Todo todo : todos){
+        for (Todo todo : todos) {
             Object[] row = {todo.getId(), todo.getTitle(), todo.getDescription(), todo.isCompleted(), todo.getCreated_at(), todo.getUpdated_at()};
             tableModel.addRow(row);
         }
