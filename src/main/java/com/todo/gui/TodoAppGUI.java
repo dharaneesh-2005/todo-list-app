@@ -162,7 +162,7 @@ public class TodoAppGUI extends JFrame {
             todoAppDAO.createtodo(todo);
 
             JOptionPane.showMessageDialog(this,"Todo added succesfully","Success",JOptionPane.INFORMATION_MESSAGE);
-            loadTodos();
+            clearForm();
         }
         catch(SQLException e){
             JOptionPane.showMessageDialog(this,"Error adding todo","Failure",JOptionPane.ERROR_MESSAGE);
@@ -196,7 +196,7 @@ public class TodoAppGUI extends JFrame {
 
                 if (todoAppDAO.updateTodo(todo)) {
                     JOptionPane.showMessageDialog(this, "Todo updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    loadTodos();
+                    clearForm();
                 } else {
                     JOptionPane.showMessageDialog(this, "Update failed", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -209,12 +209,14 @@ public class TodoAppGUI extends JFrame {
         int row = todoTable.getSelectedRow();
         if (row < 0) {
             JOptionPane.showMessageDialog(this, "Please select a row to delete!", "Validation", JOptionPane.WARNING_MESSAGE);
+            
             return;
         }
         int id = (int) tableModel.getValueAt(row, 0);
         try{
             if(todoAppDAO.deleteTodo(id)==true){
             JOptionPane.showMessageDialog(this,"Todo deleted successfully","Success",JOptionPane.INFORMATION_MESSAGE);}
+            
             else{
                 JOptionPane.showMessageDialog(this,"Failed to delete the row","Failed",JOptionPane.WARNING_MESSAGE);
             }
@@ -223,10 +225,10 @@ public class TodoAppGUI extends JFrame {
         catch (SQLException e){
             JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        loadTodos();
+        clearForm();
     }
     private void refreshTodo(){
-        loadTodos();
+        clearForm();
     }
     private void loadPendingTodos(){
         try{
@@ -273,5 +275,13 @@ public class TodoAppGUI extends JFrame {
             descriptionArea.setText(description);
             completedCheckBox.setSelected(completed);
         }
+    }
+    
+    private void clearForm(){
+        titleField.setText("");
+        descriptionArea.setText("");
+        completedCheckBox.setSelected(false);
+        categoryComboBox.setSelectedItem("All");
+        loadTodos();
     }
 }
